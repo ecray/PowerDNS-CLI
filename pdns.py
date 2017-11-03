@@ -260,22 +260,23 @@ class PDNSControl(object):
             content = [v['records'][0]['content'] for v in data if v['type'] in 'A']
         else:
             print("DNS Zone '%s' Does Not Exist..." % self.args.zone)
-            sys.exit(1)
 
-        """ collect and sort based on subnet """
-        subnets = {}
-        for i in content:
-            net = '.'.join(i.split('.')[:3])
-            ip = int(i.split('.')[3])
-            if subnets.get(net, False):
-                subnets[net].append(ip)
-            else:
-                subnets[net] = [ip]
+        if content:
+            """ collect and sort based on subnet """
+            subnets = {}
+            for i in content:
+                net = '.'.join(i.split('.')[:3])
+                ip = int(i.split('.')[3])
+                if subnets.get(net, False):
+                    subnets[net].append(ip)
+                else:
+                    subnets[net] = [ip]
 
-        subnets[self.args.origin].sort()
-        logger.debug("{} IPs in use: {}".format(subnets[self.args.origin],subnets[self.args.origin]))
-        ip = self._find_gaps(subnets[self.args.origin])
-        print("{}.{}".format(self.args.origin, str(next(ip)[0])))
+            subnets[self.args.origin].sort()
+            logger.debug("{} IPs in use: {}".format(subnets[self.args.origin],subnets[self.args.origin]))
+            """ create generator object """
+            ip = self._find_gaps(subnets[self.args.origin])
+            print("{}.{}".format(self.args.origin, str(next(ip)[0])))
 
     def _find_gaps(self, ips):
         # keeping ranges away from network ranges
