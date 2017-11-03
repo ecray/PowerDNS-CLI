@@ -86,10 +86,10 @@ The following commands adds the new MASTER zone `example.com`the PowerDNS API Ke
 
 ### Finding the next available IP in a zone
 ```
-./pdns.py --zone las1.marqeta.com --origin 10.35.18 query_next_ip
+./pdns.py --zone example.com. --origin 10.35.18 query_next_ip
 10.35.18.11
 
-./pdns.py --zone las1.marqeta.com --origin 10.35.53 query_next_ip
+./pdns.py --zone example.com. --origin 10.35.53 query_next_ip
 10.35.53.18
 ```
 
