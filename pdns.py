@@ -252,6 +252,7 @@ class PDNSControl(object):
         """
         Query for next available IP in zone
         """
+        content = None
         logger.debug("sending GET request to %s" % self.uri)
         r = requests.get(self.uri, headers=self.headers)
         logger.debug("returned %d %s" % (r.status_code, r.text))
