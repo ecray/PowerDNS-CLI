@@ -6,6 +6,7 @@ This script is inspired by the [job](https://github.com/mrlesmithjr/python-power
 
 Main changes to the original script:
     
+* query_next_ip functionality to get available IPs in a zone
 * removed all the CSV stuff
 * moved output to the logging module
 * updated to the API V1 (https://doc.powerdns.com/md/httpapi/api_spec/)
@@ -24,7 +25,7 @@ usage: pdns.py [-h] [--apikey APIKEY] [--apihost APIHOST] [--apiport APIPORT]
                [--priority PRIORITY]
                [--recordType {A,AAAA,CNAME,MX,NS,PTR,SOA,SRV,TXT,NAPTR}]
                [--setPTR] [--ttl TTL] [--zone ZONE]
-               [--zoneType {MASTER,NATIVE,SLAVE}] [--debug]
+               [--zoneType {MASTER,NATIVE,SLAVE}] [--debug] [--oneshot]
                {add_records,add_zones,delete_records,delete_zones,query_config,query_stats,query_zones,query_next_ip}
 
 PDNS Controls...
@@ -54,6 +55,7 @@ optional arguments:
   --zoneType {MASTER,NATIVE,SLAVE}
                         DNS Zone Type
   --debug               Enable debug
+  --oneshot				Retrieve one IP when using query_next_ip, default retrieves a list
 ```
 
 ## Adding a DNS zone
@@ -86,11 +88,24 @@ The following commands adds the new MASTER zone `example.com`the PowerDNS API Ke
 
 ### Finding the next available IP in a zone
 ```
-./pdns.py --zone example.com. --origin 10.35.18 query_next_ip
+./pdns.py --zone example.com. --origin 10.35.18 query_next_ip --oneshot
 10.35.18.11
 
-./pdns.py --zone example.com. --origin 10.35.53 query_next_ip
-10.35.53.18
+./pdns.py --zone example.com --origin 10.35.4 query_next_ip
+10.35.4.11
+10.35.4.16
+10.35.4.17
+10.35.4.18
+10.35.4.20
+10.35.4.21
+10.35.4.33
+10.35.4.34
+10.35.4.35
+10.35.4.38
+10.35.4.41
+10.35.4.42
+10.35.4.43
+10.35.4.44
 ```
 
 ### Adding an A record

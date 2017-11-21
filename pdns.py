@@ -260,7 +260,7 @@ class PDNSControl(object):
             data = r.json()['rrsets']
             content = [v['records'][0]['content'] for v in data if v['type'] in 'A']
         else:
-            print("DNS Zone '%s' Does Not Exist..." % self.args.zone)
+            print("Query failed. Check API settings and origin '%s' exist..." % self.args.zone)
 
         if content:
             """ collect and sort based on subnet """
@@ -275,14 +275,18 @@ class PDNSControl(object):
 
             subnets[self.args.origin].sort()
             logger.debug("{} IPs in use: {}".format(subnets[self.args.origin],subnets[self.args.origin]))
-            """ create generator object """
-            ip = self._find_gaps(subnets[self.args.origin])
-            print("{}.{}".format(self.args.origin, str(next(ip)[0])))
+            """ find gaps in ips available in zone """
+            ips = self._find_gaps(subnets[self.args.origin])
+            if self.args.oneshot:
+                print("{}.{}".format(self.args.origin, str(ips[0])))
+            else:
+                for ip in ips:
+                    print("{}.{}".format(self.args.origin, ip))
 
     def _find_gaps(self, ips):
-        # keeping ranges away from network ranges
+        # keeping ranges away from network device ranges
         start, end = 11, 250
-        yield list(set(range(start, end + 1)).difference(ips))
+        return list(set(range(start, end + 1)).difference(ips))
             
     def read_cli_args(self):
         """
@@ -314,6 +318,7 @@ class PDNSControl(object):
         parser.add_argument('--name', help='DNS record name')
         parser.add_argument('--nameserver', help='DNS nameserver for zone, can be specified multiple times', action='append')
         parser.add_argument('--origin', help='DNS zone origin ie. 10.35.50')
+        parser.add_argument('--oneshot', help='Retrieve one ip', action='store_true', default=False)
         parser.add_argument('--priority', help='Define priority', default=0)
         parser.add_argument('--recordType', help='DNS record type',
                             choices=['A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'SOA', 'SRV', 'TXT', 'NAPTR'])
